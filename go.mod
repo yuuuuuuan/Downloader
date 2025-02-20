@@ -1,4 +1,4 @@
-module github.com/yourusername/Downloader
+module github.com/yuuuuuuan/Downloader
 
 go 1.23.4
 
