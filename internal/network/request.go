@@ -2,24 +2,17 @@ package network
 
 import (
 	"bytes"
-	"encoding/json"
-	"fmt"
+	"io"
 	"net/http"
 )
 
-func HttpPost(url string, req map[string]interface{}) (*http.Response, error) {
-	// Convert the request map to JSON
-	jsonReq, err := json.Marshal(req)
-	if err != nil {
-		//utils.Print.Errorf("fail to convert req to json")
-		return nil, fmt.Errorf("received nil req")
-	}
+func HttpPost(url string, req []byte) ([]byte, error) {
 
 	// Create a new POST request
-	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonReq))
+	request, err := http.NewRequest("POST", url, bytes.NewBuffer(req))
 	if err != nil {
 		//utils.Print.Errorf("fail to create req")
-		return nil, fmt.Errorf("req create failed")
+		return nil, err
 	}
 
 	// Set the Content-Type header to application/json
@@ -30,9 +23,16 @@ func HttpPost(url string, req map[string]interface{}) (*http.Response, error) {
 	response, err := client.Do(request)
 	if err != nil {
 		//utils.Print.Errorf("fail to sent req")
-		return nil, fmt.Errorf("req sent failed")
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
 	}
 	// log.Println("HttpPost")
 	// log.Println(response)
-	return response, nil
+	return body, nil
 }
