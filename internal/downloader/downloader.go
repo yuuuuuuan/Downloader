@@ -14,7 +14,7 @@ type Downloader struct {
 func (d *Downloader) StartDownload() error {
 	fmt.Println("Starting download:", d.URL)
 	// 使用网络模块下载文件
-	fileData, err := network.DownloadFile(d.URL)
+	fileData, err := network.Post(d.URL)
 	if err != nil {
 		return err
 	}
